@@ -4,14 +4,24 @@
  */
 
 // Dependencies
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose')
-const cors = require("cors")
+const mongoose = require('mongoose');
+const path = require('path');
+const cors = require("cors");
+const setRoute = require('./routes/routes');
 
 // Create server 
 const app = express()
 
+// Enable All CORS Requests
+app.use(cors())
+
+// Add public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set all routes
+setRoute(app)
 
 // If requested url doesn't exist , throw 404 error
 app.use((req, res, next) => {
@@ -38,6 +48,7 @@ app.use((error, req, res, next) => {
 // Get server port and database URL from environment if exists otherwise from config file
 const PORT = process.env.PORT || 8080;
 const DB_URL = process.env.MONGODB_URL
+
 
 // Database connection and Starting server
 mongoose.
