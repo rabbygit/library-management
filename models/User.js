@@ -32,7 +32,7 @@ const userSchema = new Schema({
         required: true,
         minLength: 4
     },
-    profilePicture: {
+    profile_pic: {
         type: String,
         default: "/uploads/default.png"
     },
