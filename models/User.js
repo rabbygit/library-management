@@ -22,15 +22,12 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
         trim: true,
-        lowercase: true,
         validate: [validateEmail, 'E-mail is not valid']
     },
     password: {
         type: String,
         required: true,
-        minLength: 4
     },
     profile_pic: {
         type: String,

@@ -20,12 +20,16 @@ app.use(cors())
 // Add public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Accept json and url encoded payload
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
 // Set all routes
 setRoute(app)
 
-// If requested url doesn't exist , throw 404 error
+// If requested url doesn't match , throw  error with 404 status code
 app.use((req, res, next) => {
-    let error = new Error('404 page Not Found')
+    let error = new Error('Not Found')
     error.status = 404
     next(error)
 })
@@ -35,13 +39,15 @@ app.use((error, req, res, next) => {
     // Check if error object has proper status code and message then send response with the given status code and message
     if (typeof (error.status) == 'number' && error.message) {
         return res.status(error.status).json({
+            success: false,
             message: error.message
         })
     }
 
-    // Default error response in absence of proper error
-    return res.status(404).json({
-        message: '404 page Not Found'
+    // Handle server error
+    return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error'
     })
 })
 
