@@ -51,7 +51,7 @@ exports.signupPostController = async (req, res, next) => {
         await new_user.save();
 
         // Response back
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             message: 'Library member registered successfully'
         })
