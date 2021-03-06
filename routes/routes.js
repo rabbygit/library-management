@@ -5,6 +5,7 @@
 
 // Dependencies
 const authRoute = require('./authRoute');
+const booksRoute = require('./booksRoute');
 
 
 // Routes and their relative handler
@@ -12,6 +13,10 @@ const routes = [
     {
         path: '/api/auth',
         handler: authRoute
+    },
+    {
+        path: '/api/books',
+        handler: booksRoute
     },
     {
         path: '/',
