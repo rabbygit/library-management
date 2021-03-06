@@ -108,9 +108,10 @@ exports.authorsPutController = async (req, res, next) => {
 
     // Sanity check
     name = typeof (name) == 'string' && name.trim().length ? name.trim() : false;
+    bio = typeof (bio) == 'string' && bio.trim().length ? bio.trim() : false;
 
-    // if name is not present
-    if (!name) {
+    // if name and bio are not present
+    if (!name && !bio) {
         return res.status(400).json({
             success: true,
             message: 'Bad Request'
@@ -118,17 +119,28 @@ exports.authorsPutController = async (req, res, next) => {
     }
 
     try {
+        // Find the author
+        let author = await Author.findById(id).exec();
+        if (!author) {
+            let error = new Error("Author doesn't exist")
+            error.status = 404
+            throw error
+        }
+
+        // Construct the new author that will be updated
+        let author_to_update = {
+            name: name ? name : author.name,
+            bio: bio ? bio : author.bio
+        }
+
         // Find the author and update
         let updated_author = await Author.findByIdAndUpdate(
             { _id: id },
-            {
-                name,
-                bio
-            },
+            author_to_update,
             { new: true }
         )
 
-        res.status(204).json({
+        res.status(200).json({
             success: true,
             message: 'Author updated successfully',
             author: updated_author
@@ -146,6 +158,14 @@ exports.authorsDeleteController = async (req, res, next) => {
     let { id } = req.params
 
     try {
+        // Find the author
+        let author = await Author.findById(id).exec();
+        if (!author) {
+            let error = new Error("Author doesn't exist")
+            error.status = 404
+            throw error
+        }
+
         // Find the author and delete
         await Author.findByIdAndDelete({ _id: id })
         res.status(200).json({
