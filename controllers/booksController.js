@@ -195,3 +195,47 @@ exports.booksDeleteController = async (req, res, next) => {
     }
 }
 
+
+// Browse books by author
+// Required field : author_name
+exports.booksBrowseController = async (req, res, next) => {
+    // Get author_name from request params
+    let { author_name } = req.params
+    // Sanity check
+    author_name = typeof (author_name) == 'string' && author_name.trim().length ? author_name.trim() : false;
+
+    // If author name doesn't exist
+    if (!author_name) {
+        return res.status(404).json({
+            success: false,
+            message: 'Not Found'
+        })
+    }
+
+    try {
+        // Find the author with partial match
+        let authors = await Author.find({ name: new RegExp(author_name, 'i') }, '_id').exec()
+
+        // if no author found
+        if (!authors.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'No Author Found',
+                books: []
+            })
+        }
+
+        // Find all books with matched authors
+        let books = await Book.find({ author: { $in: authors.map(author => author._id) } }).populate('author').exec()
+
+        // Response
+        res.status(200).json({
+            success: true,
+            books
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+

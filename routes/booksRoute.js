@@ -10,11 +10,17 @@ const {
     booksPostController,
     specificBooksGetController,
     booksPutController,
-    booksDeleteController
+    booksDeleteController,
+    booksBrowseController
 } = require('../controllers/booksController')
 
 const { isAdmin, isUser } = require('../middlewares/authMiddleware')
 
+
+
+// Browse books by authors name
+// Accessible to system user (member / admin)
+router.get('/browse/:author_name', isUser, booksBrowseController)
 
 // Get all books
 // Accessible to system user (member / admin)
@@ -35,6 +41,7 @@ router.put('/:id', isAdmin, booksPutController)
 // Delete a book
 // Accessible to admin
 router.delete('/:id', isAdmin, booksDeleteController)
+
 
 // Export the router
 module.exports = router

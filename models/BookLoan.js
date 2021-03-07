@@ -6,10 +6,6 @@
 // Dependencies
 const { Schema, model } = require('mongoose');
 
-// Borrowed date will be set by timestamp
-const schemaOptions = {
-    timestamps: { createdAt: 'borrowed_date' },
-};
 
 // Define the BookLoan schema
 const bookLoanSchema = new Schema({
@@ -26,9 +22,9 @@ const bookLoanSchema = new Schema({
     status: {
         type: String,
         default: "pending",
-        enum: ["pending", "accepted", "returned"]
+        enum: ["pending", "accepted", "rejected", "returned"]
     }
-}, schemaOptions)
+})
 
 const BookLoan = model('BookLoan', bookLoanSchema)
 

@@ -22,16 +22,16 @@ exports.isAdmin = async (req, res, next) => {
 
     try {
         // Verify the token
-        const userId = await jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = await jwt.verify(token, process.env.SECRET_KEY);
 
-        if (!userId.id) {
+        if (!decoded.id) {
             let error = new Error("Forbidden")
             error.status = 403
             throw error
         }
 
         // Find the user with id
-        let user = await User.findById(userId.id)
+        let user = await User.findById(decoded.id)
 
         // if user is not an admin
         if (!user || user.role != 'admin') {
@@ -40,6 +40,8 @@ exports.isAdmin = async (req, res, next) => {
                 message: 'Unauthorized'
             })
         }
+        // Set the userId to use in controller
+        req.userId = decoded.id
 
         // User is admin
         next()
@@ -52,7 +54,6 @@ exports.isAdmin = async (req, res, next) => {
         } else {
             next(error)
         }
-
     }
 }
 
@@ -71,16 +72,16 @@ exports.isMember = async (req, res, next) => {
 
     try {
         // Verify the token
-        const userId = await jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = await jwt.verify(token, process.env.SECRET_KEY);
 
-        if (!userId.id) {
+        if (!decoded.id) {
             let error = new Error("Forbidden")
             error.status = 403
             throw error
         }
 
         // Find the user with id
-        let user = await User.findById(userId.id)
+        let user = await User.findById(decoded.id)
 
         // Check user is a member
         if (!user || user.role != 'member') {
@@ -89,6 +90,10 @@ exports.isMember = async (req, res, next) => {
                 message: 'Unauthorized'
             })
         }
+
+        // Set the userId to use in controller
+        req.userId = decoded.id
+
         next()
     } catch (error) {
         if (['TokenExpiredError', 'JsonWebTokenError', 'NotBeforeError'].includes(error.name)) {
@@ -117,16 +122,16 @@ exports.isUser = async (req, res, next) => {
 
     try {
         // Verify the token
-        const userId = await jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = await jwt.verify(token, process.env.SECRET_KEY);
 
-        if (!userId.id) {
+        if (!decoded.id) {
             let error = new Error("Forbidden")
             error.status = 403
             throw error
         }
 
         // Find the user with id
-        let user = await User.findById(userId.id)
+        let user = await User.findById(decoded.id)
 
         // User doesn't exist
         if (!user) {
@@ -135,6 +140,8 @@ exports.isUser = async (req, res, next) => {
                 message: 'Unauthorized'
             })
         }
+        // Set the userId to use in controller
+        req.userId = decoded.id
         next()
     } catch (error) {
         if (['TokenExpiredError', 'JsonWebTokenError', 'NotBeforeError'].includes(error.name)) {
