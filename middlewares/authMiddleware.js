@@ -151,6 +151,5 @@ exports.isUser = async (req, res, next) => {
         } else {
             next(error)
         }
-
     }
 }
