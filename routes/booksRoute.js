@@ -24,7 +24,7 @@ router.get('/browse/:author_name' , booksBrowseController)
 
 // Get all books
 // Accessible to system user (member / admin)
-router.get('/', isUser, booksGetController)
+router.get('/', isUser ,booksGetController)
 
 // Create a new book
 // Accessible to admin

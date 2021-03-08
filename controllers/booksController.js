@@ -11,7 +11,7 @@ const Book = require('../models/Book')
 // Required field : none
 exports.booksGetController = async (req, res, next) => {
     try {
-        let books = await Book.find({})
+        let books = await Book.find().populate('author' , 'name').exec()
         res.status(200).json({
             success: true,
             books
