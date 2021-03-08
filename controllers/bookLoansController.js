@@ -81,7 +81,7 @@ exports.bookLoanAcceptController = async (req, res, next) => {
     // If book_loan_id or userId is not present 
     if (!book_loan_id || !req.userId) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
@@ -98,7 +98,7 @@ exports.bookLoanAcceptController = async (req, res, next) => {
         }
 
         // Update the status to accepted
-        let updated_book_loan = await BookLoan.findByIdAndUpdate(book_loan_id, { status: 'accepted' }, { new: true }).exec()
+        let updated_book_loan = await BookLoan.findByIdAndUpdate(book_loan_id, { status: 'accepted' }, { new: true }).populate('book borrower', 'name').exec()
 
         // Response 
         res.status(200).json({
@@ -123,7 +123,7 @@ exports.bookLoanRejectController = async (req, res, next) => {
     // If book_loan_id or userId is not present 
     if (!book_loan_id || !req.userId) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
@@ -140,7 +140,7 @@ exports.bookLoanRejectController = async (req, res, next) => {
         }
 
         // Update the status to rejected
-        let updated_book_loan = await BookLoan.findByIdAndUpdate(book_loan_id, { status: 'rejected' }, { new: true }).exec()
+        let updated_book_loan = await BookLoan.findByIdAndUpdate(book_loan_id, { status: 'rejected' }, { new: true }).populate('book borrower', 'name').exec()
 
         // Response 
         res.status(200).json({
@@ -165,7 +165,7 @@ exports.bookLoanReturnController = async (req, res, next) => {
     // If book_loan_id or userId is not present 
     if (!book_loan_id || !req.userId) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
@@ -182,7 +182,7 @@ exports.bookLoanReturnController = async (req, res, next) => {
         }
 
         // Update the status to returned
-        let updated_book_loan = await BookLoan.findByIdAndUpdate(book_loan_id, { status: 'returned' }, { new: true }).exec()
+        let updated_book_loan = await BookLoan.findByIdAndUpdate(book_loan_id, { status: 'returned' }, { new: true }).populate('book borrower', 'name').exec()
 
         // Response 
         res.status(200).json({
@@ -201,14 +201,23 @@ exports.bookLoansGetController = async (req, res, next) => {
     // If userId is not present 
     if (!req.userId) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
 
     try {
         // Find all the book loans of the member
-        let book_loans = await BookLoan.find({ borrower: req.userId }).populate('book').exec()
+        let book_loans = await BookLoan.find({ borrower: req.userId }).populate('book borrower', 'name').exec()
+
+        // No available book loans
+        if (!book_loans.length) {
+            // Response 
+            return res.status(200).json({
+                success: false,
+                book_loans: []
+            })
+        }
 
         // Response 
         res.status(200).json({

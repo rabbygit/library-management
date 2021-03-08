@@ -11,7 +11,20 @@ const Book = require('../models/Book')
 // Required field : none
 exports.booksGetController = async (req, res, next) => {
     try {
-        let books = await Book.find({})
+
+        // Find all books
+        let books = await Book.find({}).exec()
+
+        // Books not available
+        if (!books.length) {
+            return res.status(200).json({
+                success: false,
+                books: [],
+                message: "No books available"
+            })
+        }
+
+        // If books available
         res.status(200).json({
             success: true,
             books
@@ -34,7 +47,7 @@ exports.booksPostController = async (req, res, next) => {
     // if name or author_id is not present
     if (!name || !author_id) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
@@ -115,7 +128,7 @@ exports.booksPutController = async (req, res, next) => {
     // if name and author_id are not present , then nothing to update
     if (!name && !author_id) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
@@ -154,7 +167,7 @@ exports.booksPutController = async (req, res, next) => {
             { _id: id },
             book_to_change,
             { new: true }
-        )
+        ).populate('author')
 
         res.status(200).json({
             success: true,
@@ -220,7 +233,7 @@ exports.booksBrowseController = async (req, res, next) => {
         if (!authors.length) {
             return res.status(404).json({
                 success: false,
-                message: 'No Author Found',
+                message: 'No books Found',
                 books: []
             })
         }

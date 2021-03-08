@@ -30,7 +30,9 @@ const upload = multer({
         if (extName && mimeType) {
             cb(null, true)
         } else {
-            cb(new Error("Only Support Images"))
+            let error = new Error("Only Support Images");
+            error.status = 400
+            cb(error)
         }
     }
 })

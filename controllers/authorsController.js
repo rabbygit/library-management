@@ -10,7 +10,17 @@ const Author = require('../models/Author')
 // Required field : none
 exports.authorsGetController = async (req, res, next) => {
     try {
-        let authors = await Author.find({})
+        let authors = await Author.find().exec()
+
+        // No authors exists
+        if (!authors.length) {
+            return res.status(200).json({
+                success: false,
+                message: 'No authors exist',
+                authors
+            })
+        }
+
         res.status(200).json({
             success: true,
             authors
@@ -60,7 +70,7 @@ exports.authorsPostController = async (req, res, next) => {
     // if name is not present
     if (!name) {
         return res.status(400).json({
-            success: true,
+            success: false,
             message: 'Bad Request'
         })
     }
