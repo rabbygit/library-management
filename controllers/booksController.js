@@ -239,7 +239,7 @@ exports.booksBrowseController = async (req, res, next) => {
         }
 
         // Find all books with matched authors
-        let books = await Book.find({ author: { $in: authors.map(author => author._id) } }).populate('author').exec()
+        let books = await Book.find({ author: { $in: authors.map(author => author._id) } }).populate('author', 'name').exec()
 
         // Response
         res.status(200).json({
