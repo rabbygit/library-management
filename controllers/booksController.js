@@ -13,7 +13,7 @@ exports.booksGetController = async (req, res, next) => {
     try {
 
         // Find all books
-        let books = await Book.find({}).exec()
+        let books = await Book.find().populate('author', 'name').exec()
 
         // Books not available
         if (!books.length) {
@@ -91,7 +91,7 @@ exports.specificBooksGetController = async (req, res, next) => {
 
     try {
         // Find the author
-        let book = await Book.findById(id).populate('author').exec();
+        let book = await Book.findById(id).populate('author', 'name').exec();
 
         // If author doesn't exist
         if (!book) {
@@ -167,7 +167,7 @@ exports.booksPutController = async (req, res, next) => {
             { _id: id },
             book_to_change,
             { new: true }
-        ).populate('author')
+        ).populate('author', 'name')
 
         res.status(200).json({
             success: true,
