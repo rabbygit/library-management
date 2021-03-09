@@ -7,5 +7,5 @@
 $ npm install
 
 # launch server
-$ npm run start
+$ npm start
 ```

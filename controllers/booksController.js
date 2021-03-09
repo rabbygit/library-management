@@ -167,7 +167,7 @@ exports.booksPutController = async (req, res, next) => {
             { _id: id },
             book_to_change,
             { new: true }
-        ).populate('author', 'name')
+        ).populate('author', 'name').exec()
 
         res.status(200).json({
             success: true,
